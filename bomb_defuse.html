@@ -6,34 +6,38 @@
     <title>鷹眼行動</title>
     
     <script>
-        // 「閱後即焚」腳本 (已更新，多存一個 puzzle)
+        // 「閱後即焚」腳本
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // 1. 存儲密碼
         window.correctPassword = (urlParams.get('pass') || "").toUpperCase();
-        
-        // 2. *** 關鍵新增：存儲謎題 ***
-        // e.g., "⏹️,🔺,⭕"
         window.puzzleString = urlParams.get('puzzle') || ""; 
-
-        // 3. 立即清除 URL (閱後即焚)
         history.replaceState(null, '', window.location.pathname);
     </script>
     
     <style>
-        /* (大部分 CSS 保持不變) */
+        /* --- *** 關鍵修改：重新計算寬度 *** --- */
         :root {
+            /* 桌面版 (基礎 16px): 2em = 32px */
             --font-base: 1rem;
-            --input-size: 2.5em;
-            --input-gap: 0.25em;
+            --input-size: 2em; 
+            --input-gap: 0.25em; /* 4px */
+            /* 總寬度計算:
+               (輸入框 32px + 邊距 4px*2) * 4 = 160px
+               (分隔符 3.2px*2) = ~7px
+               (160 * 3) + (7 * 2) = 480 + 14 = 494px
+               494px < 500px (容器寬度), 排版OK
+            */
         }
+
+        /* 手機版 (基礎 18px): 2.5em = 45px */
         @media (max-width: 600px) {
             :root {
-                --font-base: 1.125rem;
-                --input-size: 3em;
+                --font-base: 1.125rem; 
+                --input-size: 2.5em;     
                 --input-gap: 0.3em;
             }
+            /* 在手機上，群組會自動換行，所以寬度不是問題 */
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             background-color: #f0f2f5;
@@ -60,14 +64,13 @@
             font-size: calc(var(--font-base) * 1.75);
             color: #1a2b4d;
             margin-top: 0;
-            margin-bottom: 0.5rem; /* 縮小一點間距 */
+            margin-bottom: 0.5rem;
         }
         
-        /* --- *** 關鍵新增：謎題顯示區 *** --- */
         #puzzle-display {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #dc3545; /* 醒目的紅色 */
+            color: #dc3545; 
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -82,12 +85,71 @@
             margin-bottom: 0.25rem;
         }
         
-        .code-input-area { /* (樣式保持不變) */ }
-        .code-input-group { /* (樣式保持不變) */ }
-        .code-input { /* (樣式保持不變) */ }
-        .code-separator { /* (樣式保持不變) */ }
-        .unlock-button { /* (樣式保持不變) */ }
-        .result-message { /* (樣式保持不變) */ }
+        /* --- *** 關鍵修改：確保 HTML/CSS 結構正確 *** --- */
+        .code-input-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            /* 在窄螢幕上 (例如 500px 以下)，允許群組換行 */
+            flex-wrap: wrap; 
+        }
+        /* 這個群組 div 非常重要 */
+        .code-input-group { 
+            display: flex; 
+            flex-wrap: nowrap; /* 確保 4 個輸入框絕不換行 */
+        }
+        .code-input {
+            width: var(--input-size);
+            height: calc(var(--input-size) * 1.2);
+            font-size: calc(var(--font-base) * 1.25); /* 稍微縮小字體 */
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin: 0 var(--input-gap);
+            padding: 0;
+            text-transform: uppercase;
+            -moz-appearance: textfield;
+        }
+        .code-input::-webkit-outer-spin-button,
+        .code-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .code-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+            outline: none;
+        }
+        .code-separator {
+            font-size: calc(var(--font-base) * 1.5); /* 調整分隔符大小 */
+            font-weight: bold;
+            color: #888;
+            line-height: calc(var(--input-size) * 1.2);
+            padding: 0 0.2em;
+            align-self: center;
+        }
+        .unlock-button {
+            font-size: calc(var(--font-base) * 1.25);
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8em 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .unlock-button:hover { background-color: #0056b3; }
+        .result-message {
+            margin-top: 1.5rem;
+            font-size: calc(var(--font-base) * 1.2);
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+        .result-success { color: #28a745; }
+        .result-error { color: #dc3545; }
     </style>
 </head>
 <body>
@@ -100,20 +162,25 @@
         </div>
 
         <div class="code-input-area" id="code-container">
+            
             <div class="code-input-group">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 1 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 2 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 3 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 4 位">
             </div>
+            
             <span class="code-separator">-</span>
+            
             <div class="code-input-group">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 5 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 6 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 7 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 8 位">
             </div>
+            
             <span class="code-separator">-</span>
+            
             <div class="code-input-group">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 9 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 10 位">
@@ -135,13 +202,12 @@
             const unlockButton = document.getElementById("unlock-button");
             const resultMessage = document.getElementById("result-message");
 
-            // *** 關鍵新增：顯示謎題 ***
+            // 顯示謎題
             if (puzzleString) {
-                // 將 "⏹️,🔺,⭕" 轉換為 "1. ⏹️  2. 🔺  3. ⭕"
                 const puzzleArray = puzzleString.split(',');
                 const formattedPuzzle = puzzleArray.map((symbol, index) => {
                     return `${index + 1}. ${symbol}`;
-                }).join(' &nbsp; '); // 使用 &nbsp; 增加間距
+                }).join(' &nbsp; '); 
                 
                 document.getElementById('puzzle-order').innerHTML = formattedPuzzle;
             } else {
@@ -156,8 +222,7 @@
                 return; 
             }
 
-            // (handleInput, handleKeydown, checkPassword 函式保持不變)
-            // ... (請保留您原有的函式) ...
+            // 「自動跳轉」功能
             function handleInput(e) {
                 const currentInput = e.target;
                 const value = currentInput.value;
@@ -167,6 +232,8 @@
                     inputs[index + 1].focus();
                 }
             }
+
+            // 「按 Backspace 往前跳」的功能
             function handleKeydown(e) {
                 const currentInput = e.target;
                 const index = Array.prototype.indexOf.call(inputs, currentInput);
@@ -174,6 +241,8 @@
                     inputs[index - 1].focus();
                 }
             }
+
+            // 「檢查密碼」的功能
             function checkPassword() {
                 const enteredCode = Array.from(inputs).map(input => input.value).join('').toUpperCase();
                 if (enteredCode === correctPassword) {
@@ -186,7 +255,8 @@
                     resultMessage.className = "result-message result-error";
                 }
             }
-            // (綁定事件的迴圈保持不變)
+            
+            // 綁定功能
             inputs.forEach(input => {
                 input.addEventListener("input", handleInput);
                 input.addEventListener("keydown", handleKeydown);
