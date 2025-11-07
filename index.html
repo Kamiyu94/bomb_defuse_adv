@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鷹眼行動 - 任務簡報 (進階版)</title>
+    <style>
+        /* (CSS 樣式保持不變, 為了簡潔此處省略) */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            box-sizing: border-box;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%);
+            background-size: 100% 4px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #2a2a2a;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .classified-stamp {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4141;
+            border: 3px solid #ff4141;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            transform: rotate(-5deg);
+        }
+        h1 {
+            color: #00ff41;
+            margin: 0 0 1.5rem 0;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        .briefing-content {
+            text-align: left;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            border-top: 1px dashed #555;
+            border-bottom: 1px dashed #555;
+            padding: 1.5rem 0;
+            margin-bottom: 2.5rem;
+        }
+        .briefing-content h2 {
+            color: #ffc107;
+            margin-top: 0;
+        }
+        .briefing-content ol {
+            padding-left: 1.5rem;
+        }
+        .briefing-content li {
+            margin-bottom: 0.5rem;
+        }
+        .briefing-content strong {
+            color: #4db8ff;
+            font-weight: normal;
+        }
+        .role-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .role-box {
+            flex: 1;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #555;
+            background-color: #1e1e1e;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .role-box h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+            text-shadow: none;
+        }
+        .role-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        #player-box {
+            border-color: #4db8ff;
+        }
+        #player-box h2 {
+            color: #4db8ff;
+        }
+        .status-indicator {
+            color: #ffc107;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed #555;
+            display: block;
+            animation: blink 1.5s infinite;
+        }
+        #instructor-box {
+            border-color: #ff4141;
+        }
+        #instructor-box h2 {
+            color: #ff4141;
+        }
+        #secret-link {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            opacity: 0;
+            cursor: default;
+            z-index: 999;
+        }
+        @media (max-width: 700px) {
+            .role-container {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .classified-stamp {
+                font-size: 1.5rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .briefing-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <span class="classified-stamp">最高機密</span>
+        <h1>鷹眼行動：任務簡報</h1>
+
+        <div class="briefing-content">
+            <p>探員，歡迎歸隊。威脅已升級，任務協議已更新。</p>
+            
+            <h2>情勢分析</h2>
+            <p>代號「黑蛇」的恐怖組織升級了他們的引爆裝置。密碼不再是線性輸入，而是與一組加密符號綁定。</p>
+
+            <h2>任務目標 (進階協議)</h2>
+            <p>你們的團隊必須解讀並排序三組加密情報：</p>
+            <ol>
+                <li><strong>教官 (Instructor):</strong> 在本頁下方使用秘密入口，以「啟動任務」並產生所有人的專屬連結。</li>
+                
+                <li><strong>情報小組 (Alpha, Bravo, Charlie):</strong> 教官將分別提供 3 個連結。你們會各自獲得一組 <strong>4 位密碼</strong> 以及一個 <strong>關鍵符號</strong>（例如：🔺）。</li>
+                <li><strong>拆彈小組 (Defuse):</strong> 教官將提供「拆彈主頁」的連結。你們會看到一個 <strong>「謎題順序」</strong>（例如：1. ⏹️，2. 🔺，3. ⭕）。</li>
+                <li><strong>團隊合作：</strong> 你們必須**透過無線電**（使用北約音標）彙整所有情報，找出**哪個符號對應哪組密碼**，然後**依照「謎題順序」**輸入 12 位密碼。</li>
+                </ol>
+            <p>通訊和解讀是這次任務的關鍵。祝你好運。</p>
+        </div>
+
+        <div class="role-container">
+            
+            <div class="role-box" id="player-box">
+                <div>
+                    <h2>...我是玩家...</h2>
+                    <p>請在此等候。您的教官將會提供您專屬的任務連結（例如：拆彈頁面或密碼頁面）。</p>
+                </div>
+                <span class="status-indicator">...AWAITING MISSION DATA...</span>
+            </div>
+
+            <div class="role-box" id="instructor-box">
+                <div>
+                    <h2>...我是教官...</h2>
+                    <p>任務流程已確認。通訊頻道已加密。請依照您的權限啟動任務。</p>
+                </div>
+                <span class="status-indicator" style="animation: none; opacity: 1; color: #ff4141;">...STANDBY FOR ACTION...</span>
+            </div>
+        </div>
+
+    </div>
+    
+    <a id="secret-link" href="mission_generator.html" aria-label="啟動任務 (秘密入口)"></a>
+
+</body>
+</html>
