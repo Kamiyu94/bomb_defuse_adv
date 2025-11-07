@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鷹眼行動 - 任務產生器</title>
+    <style>
+        /* (CSS 樣式保持不變, 為了簡潔此處省略) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .container {
+            background-color: #3c3c3c;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        h1 {
+            color: #4db8ff;
+            margin-top: 0;
+        }
+        .generate-button {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .generate-button:hover {
+            background-color: #0056b3;
+        }
+        .links-container {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            display: none; /* 預設隱藏 */
+        }
+        .links-container h2 {
+            margin-top: 0;
+            color: #ffc107;
+            border-bottom: 2px solid #555;
+            padding-bottom: 0.5rem;
+        }
+        .links-container p {
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .link-text {
+            display: flex;
+            align-items: center;
+            flex-basis: 70%;
+            min-width: 250px;
+        }
+        .links-container strong {
+            color: #f0f0f0;
+            display: inline-block;
+            min-width: 110px;
+        }
+        .links-container a {
+            color: #4db8ff;
+            text-decoration: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            word-break: break-all;
+            margin-right: 10px;
+        }
+        .links-container a:hover {
+            text-decoration: underline;
+        }
+        
+        .copy-btn {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.9rem;
+            padding: 5px 12px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6c757d;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover {
+            background-color: #5a6268;
+        }
+        .copy-btn.copied {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .password-display {
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #28a745; 
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #1e1e1e;
+            border-radius: 5px;
+            cursor: pointer; 
+            user-select: none; 
+            transition: color 0.2s;
+        }
+        .password-display.hidden-state {
+            color: #ffc107; 
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>鷹眼行動 - 任務產生器</h1>
+        <button class="generate-button" id="generate-button">產生新任務連結</button>
+        <div class="links-container" id="links-container">
+            <h2>新任務已產生！</h2>
+            <p>請將以下連結分發給各小組：</p>
+            
+            <p>
+                <span class="link-text"><strong>拆彈主頁:</strong> <a href="#" id="link-main" target="_blank">bomb_defuse.html</a></span>
+                <button class="copy-btn" data-target-id="link-main">複製</button>
+            </p>
+            <p>
+                <span class="link-text"><strong>Alpha 組:</strong> <a href="#" id="link-part1" target="_blank">code_alpha.html</a></span>
+                <button class="copy-btn" data-target-id="link-part1">複製</button>
+            </p>
+            <p>
+                <span class="link-text"><strong>Bravo 組:</strong> <a href="#" id="link-part2" target="_blank">code_bravo.html</a></span>
+                <button class="copy-btn" data-target-id="link-part2">複製</button>
+            </p>
+            <p>
+                <span class="link-text"><strong>Charlie 組:</strong> <a href="#" id="link-part3" target="_blank">code_charlie.html</a></span>
+                <button class="copy-btn" data-target-id="link-part3">複製</button>
+            </p>
+            <hr style="border-color: #555;">
+            <p>
+                <span class="link-text"><strong>教官視角:</strong> <a href="#" id="link-instructor" target="_blank">answer.html</a></span>
+                <button class="copy-btn" data-target-id="link-instructor">複製</button>
+            </p>
+            
+            <div class="password-display hidden-state" id="password-display" data-visible="false">
+                [ 點此顯示/隱藏密碼 ]
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPassword = ""; // 儲存當前生成的密碼 (格式化後的)
+        const passwordDisplay = document.getElementById("password-display");
+        
+        // *** 關鍵新增：洗牌 (Shuffle) 函式 (Fisher-Yates 演算法) ***
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+            // 當還剩有元素可洗牌時
+            while (currentIndex != 0) {
+                // 挑選一個剩餘的元素
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                // 交換它與當前元素
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // *** 關鍵新增：產生 4 位密碼的函式 ***
+        function generateCode() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let code = "";
+            for (let i = 0; i < 4; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        document.getElementById("generate-button").addEventListener("click", () => {
+            
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.textContent = '複製';
+                button.classList.remove('copied');
+            });
+
+            // --- *** 關鍵修改：重寫核心邏輯 *** ---
+            
+            // 1. 定義符號 (您可以自行修改)
+            const symbols = ['🔺', '⏹️', '⭕'];
+            
+            // 2. 產生 3 組獨立密碼
+            const code1 = generateCode(); // e.g., "T4G8"
+            const code2 = generateCode(); // e.g., "F2J9"
+            const code3 = generateCode(); // e.g., "V6N1"
+
+            // 3. 建立「密碼地圖」
+            // (這個地圖決定了哪個符號對應哪組密碼)
+            const codeMap = {};
+            codeMap[symbols[0]] = code1; // e.g., codeMap['🔺'] = "T4G8"
+            codeMap[symbols[1]] = code2; // e.g., codeMap['⏹️'] = "F2J9"
+            codeMap[symbols[2]] = code3; // e.g., codeMap['⭕'] = "V6N1"
+
+            // 4. 洗牌 (Shuffle) 1: 決定「謎題順序」
+            // shuffle(symbols) 會回傳一個新陣列, e.g., ['⏹️', '🔺', '⭕']
+            const puzzleOrder = shuffle([...symbols]); 
+            
+            // 5. 洗牌 (Shuffle) 2: 決定「小隊分配」
+            // (我們把 code1, code2, code3 隨機分配給 A, B, C)
+            const teamCodes = shuffle([code1, code2, code3]);
+            const alphaCode = teamCodes[0];
+            const bravoCode = teamCodes[1];
+            const charlieCode = teamCodes[2];
+            
+            // 找到每個小隊的密碼 *對應* 的符號
+            // (這需要反向查找 codeMap)
+            const findSymbol = (code) => Object.keys(codeMap).find(key => codeMap[key] === code);
+            const alphaSymbol = findSymbol(alphaCode); // e.g., '🔺'
+            const bravoSymbol = findSymbol(bravoCode); // e.g., '⭕'
+            const charlieSymbol = findSymbol(charlieCode); // e.g., '⏹️'
+
+            // 6. 計算「最終正確密碼」
+            // 根據 "謎題順序" (puzzleOrder) 從 "密碼地圖" (codeMap) 組合
+            const finalPassword = puzzleOrder.map(symbol => codeMap[symbol]).join('');
+            // e.g., puzzleOrder 是 ['⏹️', '🔺', '⭕']
+            // finalPassword = codeMap['⏹️'] + codeMap['🔺'] + codeMap['⭕']
+            // finalPassword = "F2J9" + "T4G8" + "V6N1"
+            
+            // 7. 格式化密碼 (用於顯示)
+            const formattedPassword = finalPassword.match(/.{1,4}/g).join('-');
+            currentPassword = formattedPassword; // 存起來供 toggle 使用
+            
+            // 8. 取得目前路徑
+            const baseURL = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+
+            // 9. 產生連結 (使用新參數)
+            const puzzleString = puzzleOrder.join(','); // e.g., "⏹️,🔺,⭕"
+            
+            const linkMain = `${baseURL}bomb_defuse.html?pass=${encodeURIComponent(finalPassword)}&puzzle=${encodeURIComponent(puzzleString)}`;
+            const linkPart1 = `${baseURL}code_alpha.html?code=${encodeURIComponent(alphaCode)}&symbol=${encodeURIComponent(alphaSymbol)}`;
+            const linkPart2 = `${baseURL}code_bravo.html?code=${encodeURIComponent(bravoCode)}&symbol=${encodeURIComponent(bravoSymbol)}`;
+            const linkPart3 = `${baseURL}code_charlie.html?code=${encodeURIComponent(charlieCode)}&symbol=${encodeURIComponent(charlieSymbol)}`;
+            
+            // 教官頁面連結 (包含所有解答)
+            const linkInstructor = `${baseURL}answer.html?pass=${encodeURIComponent(formattedPassword)}&puzzle=${encodeURIComponent(puzzleString)}&alpha=${encodeURIComponent(alphaCode + ' (' + alphaSymbol + ')')}&bravo=${encodeURIComponent(bravoCode + ' (' + bravoSymbol + ')')}&charlie=${encodeURIComponent(charlieCode + ' (' + charlieSymbol + ')')}`;
+            
+            // --- 邏輯結束 ---
+
+            // 10. 將連結填入 HTML
+            document.getElementById("link-main").href = linkMain;
+            document.getElementById("link-part1").href = linkPart1;
+            document.getElementById("link-part2").href = linkPart2;
+            document.getElementById("link-part3").href = linkPart3;
+            document.getElementById("link-instructor").href = linkInstructor;
+
+            // 11. 重設密碼顯示區為隱藏狀態
+            passwordDisplay.textContent = "[ 點此顯示/隱藏密碼 ]";
+            passwordDisplay.classList.add("hidden-state");
+            passwordDisplay.dataset.visible = "false";
+            
+            // 顯示連結區
+            document.getElementById("links-container").style.display = "block";
+
+            console.log("新任務密碼:", formattedPassword);
+        });
+
+        // 密碼 toggle 功能 (保持不變)
+        passwordDisplay.addEventListener("click", () => {
+            if (currentPassword === "") return;
+            const isVisible = passwordDisplay.dataset.visible === "true";
+            if (isVisible) {
+                passwordDisplay.textContent = "[ 點此顯示/隱藏密碼 ]";
+                passwordDisplay.classList.add("hidden-state");
+                passwordDisplay.dataset.visible = "false";
+            } else {
+                passwordDisplay.textContent = `本次密碼: ${currentPassword}`;
+                passwordDisplay.classList.remove("hidden-state");
+                passwordDisplay.dataset.visible = "true";
+            }
+        });
+
+        // 複製按鈕功能 (保持不變)
+        function copyToClipboard(text, buttonEl) {
+            if (!navigator.clipboard) {
+                alert("瀏覽器不支援或未處於安全連線 (HTTPS)，無法自動複製。");
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                buttonEl.textContent = '已複製!';
+                buttonEl.classList.add('copied');
+                setTimeout(() => {
+                    buttonEl.textContent = '複製';
+                    buttonEl.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('複製失敗: ' + err);
+            });
+        }
+
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.targetId;
+                const linkElement = document.getElementById(targetId);
+                if (linkElement && linkElement.href && linkElement.href.includes('?')) {
+                    copyToClipboard(linkElement.href, button);
+                } else {
+                    alert('請先產生新任務連結！');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
