@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鷹眼行動 - 教官視角</title>
+    <style>
+        /* (CSS 樣式保持不變) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .container {
+            background-color: #ffffff;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #495057;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .full-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #dc3545; /* 醒目的紅色 */
+            background-color: #fff3f3;
+            border: 2px dashed #dc3545;
+            padding: 1.5rem;
+            border-radius: 8px;
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+            word-wrap: break-word;
+            min-height: 1.5em;
+        }
+        
+        /* --- *** 關鍵新增：謎題和分配區 *** --- */
+        #puzzle-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 2rem;
+            border-top: 1px solid #e9ecef;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+
+        .code-parts {
+            text-align: left;
+            font-size: 1.25rem;
+            color: #212529;
+        }
+        .code-parts p {
+            margin: 0.5rem 0;
+        }
+        .code-parts strong {
+            display: inline-block;
+            width: 120px; /* 稍微加寬 */
+            color: #007bff;
+        }
+        /* --- *** (RWD 樣式保持不變) *** --- */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>教官視角</h1>
+        <h2>最終解鎖順序 (謎題)</h2>
+        <div id="puzzle-display">...</div>
+
+        <h2>完整密碼</h2>
+        <div class="full-code" id="full-code-display">...</div>
+        
+        <h2>小隊密碼分配</h2>
+        <div class="code-parts">
+            <p><strong>Alpha 組:</strong> <span id="alpha-display"></span></p>
+            <p><strong>Bravo 組:</strong> <span id="bravo-display"></span></p>
+            <p><strong>Charlie 組:</strong> <span id="charlie-display"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // *** 關鍵修改：讀取所有新參數 ***
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 1. 讀取密碼 (e.g., "F2J9-V6N1-T4G8")
+            const formattedPassword = (urlParams.get('pass') || "錯誤").toUpperCase(); 
+            document.getElementById("full-code-display").textContent = formattedPassword;
+
+            // 2. 讀取謎題 (e.g., "⏹️,🔺,⭕")
+            const puzzleString = urlParams.get('puzzle') || "錯誤";
+            const puzzleArray = puzzleString.split(',');
+            const formattedPuzzle = puzzleArray.map((symbol, index) => {
+                return `${index + 1}. ${symbol}`;
+            }).join(' &nbsp; ');
+            document.getElementById("puzzle-display").innerHTML = formattedPuzzle;
+            
+            // 3. 讀取小隊分配
+            document.getElementById("alpha-display").textContent = urlParams.get('alpha') || "錯誤";
+            document.getElementById("bravo-display").textContent = urlParams.get('bravo') || "錯誤";
+            document.getElementById("charlie-display").textContent = urlParams.get('charlie') || "錯誤";
+
+            // (清除 URL 保持不變)
+            history.replaceState(null, '', window.location.pathname);
+        });
+    </script>
+</body>
+</html>
