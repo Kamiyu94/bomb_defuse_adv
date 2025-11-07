@@ -6,7 +6,7 @@
     <title>鷹眼行動</title>
     
     <script>
-        // 「閱後即焚」腳本
+        // 「閱後即焚」腳本 (保持不變)
         const urlParams = new URLSearchParams(window.location.search);
         window.correctPassword = (urlParams.get('pass') || "").toUpperCase();
         window.puzzleString = urlParams.get('puzzle') || ""; 
@@ -14,28 +14,18 @@
     </script>
     
     <style>
-        /* --- *** 關鍵修改：重新計算寬度 *** --- */
+        /* --- *** 關鍵修改：我們可以把輸入框調回大一點 *** --- */
         :root {
-            /* 桌面版 (基礎 16px): 2em = 32px */
             --font-base: 1rem;
-            --input-size: 2em; 
+            --input-size: 2.5em; /* 40px */
             --input-gap: 0.25em; /* 4px */
-            /* 總寬度計算:
-               (輸入框 32px + 邊距 4px*2) * 4 = 160px
-               (分隔符 3.2px*2) = ~7px
-               (160 * 3) + (7 * 2) = 480 + 14 = 494px
-               494px < 500px (容器寬度), 排版OK
-            */
         }
-
-        /* 手機版 (基礎 18px): 2.5em = 45px */
         @media (max-width: 600px) {
             :root {
                 --font-base: 1.125rem; 
-                --input-size: 2.5em;     
+                --input-size: 3em;     /* 54px */
                 --input-gap: 0.3em;
             }
-            /* 在手機上，群組會自動換行，所以寬度不是問題 */
         }
 
         body {
@@ -85,24 +75,26 @@
             margin-bottom: 0.25rem;
         }
         
-        /* --- *** 關鍵修改：確保 HTML/CSS 結構正確 *** --- */
+        /* --- *** 關鍵修改：從 Flex 水平佈局改為 Block 垂直佈局 *** --- */
         .code-input-area {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            /* 移除了 display: flex 和 flex-wrap: wrap */
             margin-bottom: 2rem;
-            /* 在窄螢幕上 (例如 500px 以下)，允許群組換行 */
-            flex-wrap: wrap; 
         }
-        /* 這個群組 div 非常重要 */
+        
         .code-input-group { 
             display: flex; 
-            flex-wrap: nowrap; /* 確保 4 個輸入框絕不換行 */
+            flex-wrap: nowrap;
+            justify-content: center; /* 讓 4 個一組的輸入框在內部置中 */
+            margin-bottom: 0.5rem; /* 取代 <br> 標籤 */
         }
+        .code-input-group:last-child {
+            margin-bottom: 0; /* 最後一組不需要間距 */
+        }
+
         .code-input {
             width: var(--input-size);
             height: calc(var(--input-size) * 1.2);
-            font-size: calc(var(--font-base) * 1.25); /* 稍微縮小字體 */
+            font-size: calc(var(--font-base) * 1.25);
             text-align: center;
             border: 2px solid #ccc;
             border-radius: 8px;
@@ -121,14 +113,12 @@
             box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
             outline: none;
         }
-        .code-separator {
-            font-size: calc(var(--font-base) * 1.5); /* 調整分隔符大小 */
-            font-weight: bold;
-            color: #888;
-            line-height: calc(var(--input-size) * 1.2);
-            padding: 0 0.2em;
-            align-self: center;
+        
+        /* --- *** 關鍵修改：移除分隔符樣式 *** --- */
+        .code-separator { 
+            display: none;
         }
+
         .unlock-button {
             font-size: calc(var(--font-base) * 1.25);
             font-weight: bold;
@@ -169,14 +159,14 @@
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 3 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 4 位">
             </div>
-            <br>
+            
             <div class="code-input-group">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 5 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 6 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 7 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 8 位">
             </div>
-            <br>
+            
             <div class="code-input-group">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 9 位">
                 <input type="text" class="code-input" maxlength="1" aria-label="密碼第 10 位">
@@ -189,8 +179,8 @@
     </main>
 
     <script>
+        // (JavaScript 區塊完全保持不變)
         document.addEventListener("DOMContentLoaded", () => {
-            // 從 <head> 腳本讀取
             const correctPassword = window.correctPassword; 
             const puzzleString = window.puzzleString;
             
@@ -198,7 +188,6 @@
             const unlockButton = document.getElementById("unlock-button");
             const resultMessage = document.getElementById("result-message");
 
-            // 顯示謎題
             if (puzzleString) {
                 const puzzleArray = puzzleString.split(',');
                 const formattedPuzzle = puzzleArray.map((symbol, index) => {
@@ -210,7 +199,6 @@
                 document.getElementById('puzzle-order').textContent = "錯誤：未載入謎題！";
             }
             
-            // 檢查密碼是否存在
             if (!correctPassword) {
                 resultMessage.innerHTML = "錯誤：未設定任務密碼。";
                 unlockButton.disabled = true;
@@ -218,7 +206,6 @@
                 return; 
             }
 
-            // 「自動跳轉」功能
             function handleInput(e) {
                 const currentInput = e.target;
                 const value = currentInput.value;
@@ -229,7 +216,6 @@
                 }
             }
 
-            // 「按 Backspace 往前跳」的功能
             function handleKeydown(e) {
                 const currentInput = e.target;
                 const index = Array.prototype.indexOf.call(inputs, currentInput);
@@ -238,7 +224,6 @@
                 }
             }
 
-            // 「檢查密碼」的功能
             function checkPassword() {
                 const enteredCode = Array.from(inputs).map(input => input.value).join('').toUpperCase();
                 if (enteredCode === correctPassword) {
@@ -252,7 +237,6 @@
                 }
             }
             
-            // 綁定功能
             inputs.forEach(input => {
                 input.addEventListener("input", handleInput);
                 input.addEventListener("keydown", handleKeydown);
