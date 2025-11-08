@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鷹眼行動 - 總入口</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            line-height: 1.7;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            color: #00ff41;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        /* 檔案與工具區 */
+        .hub-section {
+            background-color: #2a2a2a;
+            border: 2px solid #555;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .hub-section h2 {
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #555;
+        }
+        .hub-section a {
+            color: #00ff41;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1.5rem;
+        }
+        .hub-section a:hover {
+            text-decoration: underline;
+        }
+        /* 任務檔案 (Dossier) */
+        #dossier-box {
+            border-color: #ffc107;
+        }
+        #dossier-box h2 {
+            color: #ffc107;
+        }
+        #dossier-box a {
+            color: #ffc107;
+        }
+        /* 通用工具 (Tools) */
+        #tools-box {
+            border-color: #4db8ff;
+        }
+        #tools-box h2 {
+            color: #4db8ff;
+        }
+        #tools-box a {
+            color: #4db8ff;
+        }
+        
+        /* 模式簡報 */
+        .briefing {
+            background-color: #2a2a2a;
+            border: 2px solid #aaa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .briefing h2 {
+            color: #ffc107;
+            margin-top: 0;
+        }
+        .briefing p, .briefing li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .briefing strong {
+            color: #4db8ff;
+            font-weight: normal;
+        }
+
+        /* 模式選擇容器 (RWD) */
+        .mode-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        .mode-card {
+            flex: 1;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            border: 2px solid #555;
+            display: flex;
+            flex-direction: column;
+        }
+        .mode-card h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.8rem;
+            letter-spacing: 0.1em;
+        }
+        
+        #standard-mode { border-color: #4db8ff; }
+        #standard-mode h2 { color: #4db8ff; }
+        #advanced-mode { border-color: #ff4141; }
+        #advanced-mode h2 { color: #ff4141; }
+        
+        .start-button {
+            display: block;
+            width: 100%;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            background-color: #00ff41;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: auto;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        .start-button:hover {
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+        
+        /* 手機 RWD */
+        @media (max-width: 768px) {
+            .mode-container {
+                flex-direction: column;
+            }
+            h1 { font-size: 1.8rem; }
+            .hub-section a {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+            .briefing p, .briefing li { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 鷹眼行動 (Operation Hawkeye)</h1>
+        
+        <div class="hub-section" id="dossier-box">
+            <h2>最高機密：任務檔案</h2>
+            <a href="dossier.html" target="_blank">▶ 閱讀任務檔案 (Dossier)</a>
+        </div>
+        
+        <div class="hub-section" id="tools-box">
+            <h2>通用工具</h2>
+            <a href="communications.html" target="_blank">▶ 通訊手冊 (SOP / NATO)</a>
+        </div>
+
+        <div class="briefing">
+            <h2>任務簡報</h2>
+            <p>探員，歡迎歸隊。威脅已升級，任務協議已更新。</p>
+            <p>你們的團隊必須透過無線電、使用北約音標，解讀並排序加密情報，在時限內彙整資訊、解除威脅。</p>
+            <p>請在下方選擇您的任務模式，並**務必**詳閱您所屬小組的簡報。</p>
+        </div>
+
+        <div class="mode-container">
+            
+            <div class="mode-card" id="standard-mode">
+                <h2>標準模式</h2>
+                <p style="flex-grow: 1;">(適合初學者或無線電新手。密碼順序固定，專注於尋找與回報。)</p>
+                <a href="lobby_standard.html" class="start-button">遊玩標準版</a>
+            </div>
+
+            <div class="mode-card" id="advanced-mode">
+                <h2>進階模式</h2>
+                <p style="flex-grow: 1;">(適合進階玩家。情報順序已打亂，拆彈組必須同時解開「密碼順序」和「炸彈地點」兩個謎題。)</p>
+                <a href="lobby_advanced.html" class="start-button">遊玩進階版</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
