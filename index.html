@@ -26,10 +26,58 @@
             text-shadow: 0 0 10px #00ff41;
         }
         
-        /* 檔案與工具區 */
+        /* --- *** 關鍵修改：Dossier 內容的樣式 *** --- */
+        .dossier-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+            background-color: #2a2a2a;
+            border: 2px solid #ff4141; /* 紅色，代表機密 */
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: 0 0 30px rgba(255, 65, 65, 0.2);
+            text-align: left;
+            box-sizing: border-box;
+        }
+        .classified-stamp {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4141;
+            border: 3px solid #ff4141;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            transform: rotate(-5deg);
+        }
+        .dossier-container h1 {
+            color: #e0e0e0;
+            margin: 0 0 1.5rem 0;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 1rem;
+            text-shadow: none;
+            font-size: 2rem;
+        }
+        .dossier-container h2 {
+            color: #ffc107;
+            margin-top: 2rem;
+        }
+        .dossier-container p, .dossier-container li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .dossier-container ul {
+            padding-left: 1.5rem;
+        }
+        .dossier-container strong {
+            color: #4db8ff;
+            font-weight: normal;
+        }
+        
+        /* --- 通用工具區 --- */
         .hub-section {
             background-color: #2a2a2a;
-            border: 2px solid #555;
+            border: 2px solid #4db8ff; /* 藍色 */
             border-radius: 10px;
             padding: 1.5rem;
             margin-bottom: 2rem;
@@ -39,9 +87,10 @@
             margin: 0 0 1rem 0;
             padding-bottom: 0.5rem;
             border-bottom: 1px dashed #555;
+            color: #4db8ff;
         }
         .hub-section a {
-            color: #00ff41;
+            color: #4db8ff;
             text-decoration: none;
             font-weight: bold;
             font-size: 1.2rem;
@@ -50,55 +99,14 @@
         .hub-section a:hover {
             text-decoration: underline;
         }
-        /* 任務檔案 (Dossier) */
-        #dossier-box {
-            border-color: #ffc107;
-        }
-        #dossier-box h2 {
-            color: #ffc107;
-        }
-        #dossier-box a {
-            color: #ffc107;
-        }
-        /* 通用工具 (Tools) */
-        #tools-box {
-            border-color: #4db8ff;
-        }
-        #tools-box h2 {
-            color: #4db8ff;
-        }
-        #tools-box a {
-            color: #4db8ff;
-        }
         
-        /* 模式簡報 */
-        .briefing {
-            background-color: #2a2a2a;
-            border: 2px solid #aaa;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-        .briefing h2 {
-            color: #ffc107;
-            margin-top: 0;
-        }
-        .briefing p, .briefing li {
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-        .briefing strong {
-            color: #4db8ff;
-            font-weight: normal;
-        }
-
         /* 模式選擇容器 (RWD) */
         .mode-container {
             display: flex;
             justify-content: space-between;
             gap: 2rem;
         }
+        
         .mode-card {
             flex: 1;
             background-color: #2a2a2a;
@@ -135,7 +143,7 @@
             text-decoration: none;
             margin-top: auto;
             transition: all 0.3s ease;
-            box-sizing: border-box;
+            box-sizing: border-box; /* 修正溢出 */
         }
         .start-button:hover {
             background-color: #fff;
@@ -153,42 +161,52 @@
                 display: block;
                 margin-bottom: 0.5rem;
             }
-            .briefing p, .briefing li { font-size: 1rem; }
+            .dossier-container { padding: 1.5rem; }
+            .dossier-container p, .dossier-container li { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 鷹眼行動 (Operation Hawkeye)</h1>
         
-        <div class="hub-section" id="dossier-box">
-            <h2>最高機密：任務檔案</h2>
-            <a href="dossier.html" target="_blank">▶ 閱讀任務檔案 (Dossier)</a>
+        <div class="dossier-container">
+            <span class="classified-stamp">最高機密</span>
+            <h1>任務檔案 // 鷹眼行動</h1>
+            
+            <h2>行動代號：</h2>
+            <p>鷹眼行動 (Operation Hawkeye)</p>
+            
+            <h2>威脅目標：</h2>
+            <p>「黑蛇」(Black Snake) 恐怖組織。一個以製造混亂為樂的無政府主義團體，擅長使用加密通訊和非對稱戰術。</p>
+            
+            <h2>威脅評估：【嚴重】</h2>
+            <ul>
+                <li><strong>裝置：</strong> BS-M-8 型定時炸彈 (被稱為「黑蛇的蛋」)。</li>
+                <li><strong>引爆：</strong> 裝置已啟動，並與一個遠端加密序列綁定。</li>
+                <li><strong>拆解：</strong> 唯一的拆解方式是輸入一組 12 位數的英數終止密碼。</li>
+            </ul>
+            
+            <h2>任務簡報：</h2>
+            <p>總部已確認炸彈位置，但密碼被拆分給三名潛伏在該區域的情報官。你的團隊必須分為「情報小組」和「拆彈小組」。</p>
+            <p>所有通訊必須透過加密的無線電頻道（使用北約音標）進行。滲透、尋找情報、彙整資訊、解除威脅。祝你好運。</p>
         </div>
         
         <div class="hub-section" id="tools-box">
             <h2>通用工具</h2>
-            <a href="communications.html" target="_blank">▶ 通訊手冊 (SOP / NATO)</a>
-        </div>
-
-        <div class="briefing">
-            <h2>任務簡報</h2>
-            <p>探員，歡迎歸隊。威脅已升級，任務協議已更新。</p>
-            <p>你們的團隊必須透過無線電、使用北約音標，解讀並排序加密情報，在時限內彙整資訊、解除威脅。</p>
-            <p>請在下方選擇您的任務模式，並**務必**詳閱您所屬小組的簡報。</p>
+            <a href="https://kamiyu94.github.io/bomb_defuser/communications.html" target="_blank">▶ 通訊手冊 (SOP / NATO)</a>
         </div>
 
         <div class="mode-container">
             
             <div class="mode-card" id="standard-mode">
                 <h2>標準模式</h2>
-                <p style="flex-grow: 1;">(適合初學者或無線電新手。密碼順序固定，專注於尋找與回報。)</p>
+                <p style="flex-grow: 1;">(適合初學者或無線電新手。)</p>
                 <a href="lobby_standard.html" class="start-button">遊玩標準版</a>
             </div>
 
             <div class="mode-card" id="advanced-mode">
                 <h2>進階模式</h2>
-                <p style="flex-grow: 1;">(適合進階玩家。情報順序已打亂，拆彈組必須同時解開「密碼順序」和「炸彈地點」兩個謎題。)</p>
+                <p style="flex-grow: 1;">(適合進階玩家。)</p>
                 <a href="lobby_advanced.html" class="start-button">遊玩進階版</a>
             </div>
 
